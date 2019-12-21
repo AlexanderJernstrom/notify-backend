@@ -9,7 +9,7 @@
   "author": "Alexander Jernström",
   "license": "ISC",
   "engines": {
-    "node": "10.16.13"
+    "node": "10.16.0"
   },
   "dependencies": {
     "bcrypt": "^3.0.0",
