@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const env = require("dotenv");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 env.config();
 
 const userRoute = require("./routes/user");
@@ -11,6 +12,7 @@ const notesRoute = require("./routes/notes");
 const PORT = process.env.PORT || 5000;
 
 app.use(bodyParser());
+app.use(cors());
 
 app.use("/api/user", userRoute);
 app.use("/api/notes", notesRoute);
