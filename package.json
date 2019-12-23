@@ -1,7 +1,7 @@
 {
   "name": "note-app",
   "version": "1.0.0",
-  "description": "The backend for a app where you can take notes",
+  "description": "The backend for an app where you can take notes",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
