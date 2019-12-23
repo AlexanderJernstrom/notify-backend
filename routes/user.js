@@ -22,10 +22,11 @@ router.post("/", async (req, res) => {
   await user.save();
 
   const token = user.generateAuthToken();
-  res.header("authorization", token).send({
+  res.json({
     _id: user._id,
     name: user.name,
-    email: user.email
+    email: user.email,
+    token
   });
 });
 
