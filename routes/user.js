@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
     email: req.body.email
   });
   const salt = bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
+  user.password = await bcrypt.hash(user.password, 10);
   await user.save();
 
   const token = user.generateAuthToken();
