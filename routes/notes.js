@@ -32,14 +32,9 @@ router.post("/createNote", authenticate, async (req, res) => {
 });
 
 router.patch("/update", authenticate, async (req, res) => {
-  const updatedNote = {
-    title: req.body.title,
-    body: req.body.body
-  };
-  const oldNote = await Note.findById(req.body._id);
-  oldNote.update(updatedNote, (err, note) => {
-    if (err) return res.status(400).send("Could not update note");
-    res.send(note);
+  await Note.findById(req.body._id).then(note => {
+    note.update({ title: req.body.title, body: req.body.body });
+    res.json({ note });
   });
 });
 
