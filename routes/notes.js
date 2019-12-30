@@ -32,10 +32,12 @@ router.post("/createNote", authenticate, async (req, res) => {
 });
 
 router.patch("/update", authenticate, async (req, res) => {
-  await Note.findById(req.body._id).then(async note => {
-    await note.update({ title: req.body.title, body: req.body.body });
-    res.json({ note });
-  });
+  let oldNote = await Note.findById(req.body._id);
+
+  oldNote.title = req.body.title;
+  oldNote.body = req.body.body;
+
+  oldNote.save().then(note => res.send(note));
 });
 
 router.delete("/delete", authenticate, async (req, res) => {
