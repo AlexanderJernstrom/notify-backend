@@ -20,6 +20,7 @@ router.post("/createNote", authenticate, async (req, res) => {
     body: req.body.body
   });
   const user = await User.findById(req.user._id);
+  console.log(user);
 
   if (user.notes === null || !user.notes) {
     user.notes = [];
