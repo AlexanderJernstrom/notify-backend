@@ -32,7 +32,7 @@ router.post("/createNote", authenticate, async (req, res) => {
 });
 
 router.patch("/update", authenticate, async (req, res) => {
-  await Note.findById(req.body._id).then(note => {
+  await Note.findById(req.body._id).then(async note => {
     await note.update({ title: req.body.title, body: req.body.body });
     res.json({ note });
   });
