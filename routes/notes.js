@@ -21,6 +21,11 @@ router.post("/createNote", authenticate, async (req, res) => {
   });
   const user = await User.findById(req.user._id);
 
+  if (user.notes) {
+    user.notes = [];
+    user.notes.push(newNote);
+  }
+
   user.notes.push(newNote);
 
   user.save().catch(err => res.send(err));
