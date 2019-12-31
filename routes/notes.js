@@ -19,7 +19,7 @@ router.post("/createNote", authenticate, async (req, res) => {
     title: req.body.title,
     body: req.body.body
   });
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).catch(err => console.log(err));
   console.log(user);
 
   if (user.notes === null || !user.notes) {
