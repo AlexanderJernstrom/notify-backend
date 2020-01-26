@@ -37,6 +37,26 @@ router.post("/createNote", authenticate, async (req, res) => {
     .catch(err => res.send(err));
 });
 
+router.post("/share", async (req, res) => {
+  const note = await Note.findById(req.body._id);
+  const user = await User.findOne({ email: req.body.email });
+
+  const newNote = new Note({
+    title: note.title,
+    body: note.body
+  });
+
+  user.notes.push(newNote);
+
+  user.save().catch(err => res.send(err));
+
+  newNote
+    .save()
+    .then(note =>
+      res.send(`"${note.title}" was succesfully shared to ${user.email}`)
+    );
+});
+
 router.patch("/update", authenticate, async (req, res) => {
   let oldNote = await Note.findById(req.body._id);
 
