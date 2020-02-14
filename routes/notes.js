@@ -3,14 +3,21 @@ const router = express.Router();
 const authenticate = require("../middleware/auth");
 const Note = require("../model/Note");
 const { User } = require("../model/User");
+const List = require("../model/List");
 
 router.get("/", authenticate, async (req, res) => {
+  let notes = [];
+  let lists = [];
   await User.findById(req.user._id)
     .populate("notes")
-    .select("notes")
-    .exec((err, note) => {
+    .populate("lists")
+    .select("notes lists")
+    .exec((err, response) => {
       if (err) return res.status(400).send(err);
-      res.send(note);
+      res.json({
+        notes: response.notes,
+        lists: response.lists
+      });
     });
 });
 
@@ -40,6 +47,10 @@ router.post("/createNote", authenticate, async (req, res) => {
 router.post("/share", async (req, res) => {
   const note = await Note.findById(req.body._id);
   const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    res.send("User with that email does not exist");
+  }
 
   const newNote = new Note({
     title: note.title,

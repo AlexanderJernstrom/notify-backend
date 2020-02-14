@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const config = require("config");
 const jwt = require("jsonwebtoken");
 const { ObjectId } = mongoose.Schema;
-const Note = require("./Note");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -28,6 +27,12 @@ const UserSchema = new mongoose.Schema({
     {
       type: ObjectId,
       ref: "Note"
+    }
+  ],
+  lists: [
+    {
+      type: ObjectId,
+      ref: "List"
     }
   ]
 });
