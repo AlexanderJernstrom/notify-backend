@@ -85,4 +85,14 @@ router.delete("/delete", authenticate, async (req, res) => {
   });
 });
 
+
+router.delete('/deleteMultiple', authenticate, async (req, res) => {
+  const noteIds = req.body.notes;
+  await Note.deleteMany({_id: {"$in": noteIds} }, (err, result) => {
+    if(err) res.send(err)
+    else res.send(result)
+  })
+
+})
+
 module.exports = router;

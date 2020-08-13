@@ -5,6 +5,10 @@ const express = require("express");
 const router = express.Router();
 const { registerValidation, loginValidation } = require("../validation");
 
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
 router.post("/", async (req, res) => {
   const { error } = registerValidation(req.body);
   if (error) return res.status(404).json({ error });
@@ -44,5 +48,15 @@ router.post("/login", async (req, res) => {
 
   res.header("auth-token", token).send(token);
 });
+
+
+router.get('/search/:email', async (req, res) => {
+  const regex = new RegExp(escapeRegex(req.params.email), 'gi')
+  const searchedUsers = await User.find({email: regex})
+  const searchedUsersResult = searchedUsers.map(user => {
+    return {name: user.name, email: user.email}
+  })
+  res.send(searchedUsersResult)
+})
 
 module.exports = router;
