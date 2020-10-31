@@ -22,6 +22,6 @@ app.use("/api/lists", listRoute);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Database connected"))
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 
 app.listen(PORT, () => console.log("Server started"));
