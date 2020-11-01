@@ -44,7 +44,7 @@ router.get("/importRecipe", authenticate, async (req, res) => {
 
   await page.goto(url);
 
-  const name = "";
+  let name = "";
 
   const data = await page.evaluate(() => {
     const json = document.querySelectorAll(
@@ -64,24 +64,33 @@ router.get("/importRecipe", authenticate, async (req, res) => {
   data.forEach((obj) => {
     //Check if it has the metadata on the "first level" of the object
     if (obj.recipeIngredient) {
-      result = obj.recipeIngredient;
+      const formattedIngredients = obj.recipeIngredient.map((el) => {
+        return { title: el, completed: false };
+      });
+      result = formattedIngredients;
+    } else if (!obj.recipeIngredient) {
+      const string = JSON.stringify(obj);
+      const searchedStr = string.search("recipeIngredient");
+      if (searchedStr === -1)
+        return res.json("Recipe could't not be extracted");
+      const subString = string.substring(searchedStr, searchedStr + 400);
+      const insideBrackets = subString.match(/\[.*?\]/g);
+      console.log(insideBrackets);
+      const formattedJSON = JSON.parse(insideBrackets).map((el) => {
+        return { title: el, completed: false };
+      });
+      result = formattedJSON;
     }
     if (obj.name) {
       name = obj.name;
     }
     if (!obj.name) {
-      name = `Recipe ${Math.floor(Math.random * 20)}`;
+      name = `Recipe ${Math.floor(Math.random() * 20)}`;
     }
 
     // If that is not true we have to extract the recipe from plain text
-    const string = JSON.stringify(obj);
-    const searchedStr = string.search("recipeIngredient");
-    if (searchedStr === -1) return res.json("Recipe could't not be extracted");
-    const subString = string.substring(searchedStr, searchedStr + 400);
-    const insideBrackets = subString.match(/\[.*?\]/g);
-    console.log(insideBrackets);
-    result = JSON.parse(insideBrackets);
   });
+  console.log(result);
 
   const newList = new List({
     items: result,
