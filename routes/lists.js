@@ -36,7 +36,10 @@ router.delete("/delete/:id", authenticate, async (req, res) => {
 
 router.get("/importRecipe", authenticate, async (req, res) => {
   const url = req.query.recipeURL;
-  let browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+  let browser = await puppeteer.launch({
+    args: ["--no-sandbox"],
+    headless: true,
+  });
   let page = await browser.newPage();
 
   await page.goto(url);
