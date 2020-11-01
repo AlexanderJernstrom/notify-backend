@@ -64,7 +64,7 @@ router.get("/importRecipe", authenticate, async (req, res) => {
   data.forEach((obj) => {
     //Check if it has the metadata on the "first level" of the object
     if (obj.recipeIngredient) {
-      return res.json(obj.recipeIngredient);
+      result = obj.recipeIngredient;
     }
     if (obj.name) {
       name = obj.name;
