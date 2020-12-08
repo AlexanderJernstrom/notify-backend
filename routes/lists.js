@@ -3,7 +3,8 @@ const router = express.Router();
 const authenticate = require("../middleware/auth");
 const List = require("../model/List");
 const { User } = require("../model/User");
-const puppeteer = require("puppeteer");
+const nodeFetch = require("node-fetch");
+const { JSDOM } = require("jsdom");
 
 router.post("/create", authenticate, async (req, res) => {
   const newList = new List({
@@ -36,32 +37,25 @@ router.delete("/delete/:id", authenticate, async (req, res) => {
 
 router.get("/importRecipe", authenticate, async (req, res) => {
   const url = req.query.recipeURL;
-  let browser = await puppeteer.launch({
-    args: ["--no-sandbox"],
-    headless: true,
-  });
-  let page = await browser.newPage();
+  const response = await nodeFetch(url);
+  const html = await response.text();
+  const dom = new JSDOM(html);
 
-  await page.goto(url);
+  const { document } = dom.window;
 
   let name = "";
 
-  const data = await page.evaluate(() => {
-    const json = document.querySelectorAll(
-      'script[type="application/ld+json"]'
-    );
-    if (!json) res.json("The recipe could not be found");
-    let result = [];
-    json.forEach((obj) => {
-      result.push(JSON.parse(obj.innerHTML));
-    });
-    return result;
-  });
-  await browser.close();
-
+  const json = document.querySelectorAll('script[type="application/ld+json"]');
+  if (!json) return res.json("The recipe could not be found");
   let result = [];
+  //console.log(json);
+  json.forEach((obj) => {
+    result.push(JSON.parse(obj.innerHTML));
+  });
 
-  data.forEach((obj) => {
+  //let result = [];
+
+  result.forEach((obj) => {
     //Check if it has the metadata on the "first level" of the object
     if (obj.recipeIngredient) {
       const formattedIngredients = obj.recipeIngredient.map((el) => {
